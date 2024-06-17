@@ -17,7 +17,7 @@ public class SignupCommand implements Command {
     String password = request.getParameter(RequestParameter.PASSWORD);
     String confirmPassword = request.getParameter(RequestParameter.CONFIRM_PASSWORD);
     String pageResult;
-    if (userService.comparePasswords(password, confirmPassword) && userService.checkUserByUsernameAndPassword(username, password)) {
+    if (userService.comparePasswords(password, confirmPassword) && !userService.checkUserByUsernameAndPassword(username, password)) {
       userService.createUser(new User(username, password));
       pageResult = PagePath.LOGIN_PAGE;
     } else {
