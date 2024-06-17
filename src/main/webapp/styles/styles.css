@@ -31,9 +31,11 @@
     display: flex;
     gap: 10px;
 }
-.menu-button a{
+
+.menu-button a {
     text-decoration: none;
 }
+
 #login-button {
     color: dodgerblue;
     background: white;
@@ -52,6 +54,13 @@
     border-radius: 10px;
     width: 100px;
     height: 40px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#logout-link {
+    align-items: center;
+    color: dodgerblue;
     cursor: pointer;
     font-size: 16px;
 }

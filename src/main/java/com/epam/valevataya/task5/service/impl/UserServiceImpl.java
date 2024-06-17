@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public boolean checkUserByUsernameAndPassword(String name, String pass) {
-    if (validator.loginValidation(name) && validator.passwordValidation(pass) ) {
+    if (validator.loginValidation(name) && validator.passwordValidation(pass)) {
       String encodedPassword = encoder.encode(pass);
       System.out.println(encodedPassword);
       return userDao.checkByUsernameAndPassword(name, encodedPassword);
@@ -36,13 +36,16 @@ public class UserServiceImpl implements UserService {
   public boolean authenticate(String name, String pass) {
     if (validator.loginValidation(name) && validator.passwordValidation(pass)) {
       String encodedPassword = encoder.encode(pass);
+      System.out.println(encodedPassword);
       return userDao.authenticate(name, encodedPassword);
     }
-    return false;  }
+    return false;
+  }
 
   @Override
   public boolean createUser(User user) {
-    return userDao.save(user);
+    String encodedPassword = encoder.encode(user.getPassword());
+    return userDao.save(new User(user.getUsername(), encodedPassword));
   }
 
   @Override

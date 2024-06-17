@@ -16,7 +16,7 @@ public class ConnectionPool {
   private BlockingQueue<Connection> connections = new LinkedBlockingQueue<>(4);
   private static ConnectionPool instance;
 
-  private ConnectionPool()  {
+  private ConnectionPool() {
     try {
       DriverManager.registerDriver(new Driver());
     } catch (SQLException e) {
@@ -53,7 +53,7 @@ public class ConnectionPool {
     return instance;
   }
 
-  public Connection getConnection()  {
+  public Connection getConnection() {
     Connection connection = null;
     try {
       connection = connections.take();
