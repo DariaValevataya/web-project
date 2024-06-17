@@ -4,12 +4,11 @@ import java.io.*;
 
 import com.epam.valevataya.task5.command.Command;
 import com.epam.valevataya.task5.command.CommandType;
-import com.epam.valevataya.task5.exception.ConnectionException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
-@WebServlet(name = "helloServlet", value = {"/hello-servlet", "*.do"})
+@WebServlet(name = "helloServlet", value = {"*.do"})
 public class HelloServlet extends HttpServlet {
 
   public void init() {
@@ -22,7 +21,7 @@ public class HelloServlet extends HttpServlet {
     String page = null;
     try {
       page = command.execute(request);
-    } catch (ConnectionException e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
     request.getRequestDispatcher(page).forward(request, response);

@@ -1,6 +1,5 @@
 package com.epam.valevataya.task5.dao;
 
-import com.epam.valevataya.task5.exception.ConnectionException;
 import com.epam.valevataya.task5.model.User;
 import com.epam.valevataya.task5.pool.ConnectionPool;
 import org.apache.logging.log4j.LogManager;
@@ -14,17 +13,18 @@ import java.util.List;
 
 public interface UserDao {
   public static final Logger logger = LogManager.getLogger();
-  boolean checkByUsernameAndPassword(String username, String password) throws ConnectionException;
+  boolean checkByUsernameAndPassword(String username, String password);
+  boolean authenticate(String username, String password);
 
-  List<User> findAll() throws ConnectionException;
+  List<User> findAll();
 
-  User findUserById(int id) throws ConnectionException;
+  User findUserById(int id);
 
-  boolean delete(User user) throws ConnectionException;
+  boolean delete(User user);
 
-  boolean deleteById(int id) throws ConnectionException;
+  boolean deleteById(int id);
 
-  boolean save(User user) throws ConnectionException;
+  boolean save(User user);
 
   User update(User user);
 
@@ -38,7 +38,7 @@ public interface UserDao {
     }
   }
 
-  default void close(Connection connection) throws ConnectionException {
+  default void close(Connection connection) {
       if (connection != null) {
         ConnectionPool.getInstance().releaseConnection(connection);
       }

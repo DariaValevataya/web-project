@@ -1,8 +1,8 @@
 package com.epam.valevataya.task5.dao.impl;
 
+import com.epam.valevataya.task5.dao.ColumnName;
 import com.epam.valevataya.task5.dao.UserDao;
 import com.epam.valevataya.task5.dao.mapper.impl.UserMapper;
-import com.epam.valevataya.task5.exception.ConnectionException;
 import com.epam.valevataya.task5.model.User;
 import com.epam.valevataya.task5.pool.ConnectionPool;
 import org.apache.logging.log4j.LogManager;
@@ -20,25 +20,21 @@ public class UserDaoImpl implements UserDao {
   private static final String SELECT_ALL_USERS = "SELECT * FROM users";
   private static final String SELECT_USER_BY_ID = "SELECT * FROM users WHERE id=?";
   private static final String SELECT_USER_BY_USERNAME = "SELECT * FROM users WHERE login=?";
-
+  private static final String SELECT_USER_BY_USERNAME_AND_PASSWORD = "SELECT * FROM users WHERE login=? AND password=?";
   private static final String ADD_USER = "INSERT INTO users (login, password) values (?, ?)";
   private static final String UPDATE_USER = "UPDATE users SET login = ?, password = ? WHERE id = ?";
   private static final String DELETE_USER = " DELETE FROM users WHERE id = ? ";
 
   @Override
-  public boolean checkByUsernameAndPassword(String username, String password) throws ConnectionException {
-    boolean match = false;
+  public boolean checkByUsernameAndPassword(String username, String password) {
+    boolean match;
     Connection connection = ConnectionPool.getInstance().getConnection();
-    ResultSet resultSet = null;
     PreparedStatement statement = null;
     try {
-      statement = connection.prepareStatement(SELECT_USER_BY_USERNAME);
+      statement = connection.prepareStatement(SELECT_USER_BY_USERNAME_AND_PASSWORD);
       statement.setString(1, username);
-      resultSet = statement.executeQuery();
-      while (resultSet.next()) {
-        String pass = resultSet.getString("password");
-        match = password.equals(pass);
-      }
+      statement.setString(2, password);
+      match = statement.execute();
     } catch (SQLException e) {
       logger.warn("User not found");
       throw new RuntimeException(e);
@@ -50,9 +46,35 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public List<User> findAll() throws ConnectionException {
+  public boolean authenticate(String username, String password) {
+    boolean match = false;
     Connection connection = ConnectionPool.getInstance().getConnection();
-    ResultSet resultSet;
+    ResultSet resultSet = null;
+    PreparedStatement statement = null;
+    try {
+      statement = connection.prepareStatement(SELECT_USER_BY_USERNAME);
+      statement.setString(1, username);
+      resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        String pass = resultSet.getString(ColumnName.PASSWORD);
+        match = password.equals(pass);
+      }
+    } catch (SQLException e) {
+      logger.warn("User not found");
+      throw new RuntimeException(e);
+    } finally {
+      close(resultSet);
+      close(statement);
+      close(connection);
+    }
+    return match;
+  }
+
+
+  @Override
+  public List<User> findAll() {
+    Connection connection = ConnectionPool.getInstance().getConnection();
+    ResultSet resultSet = null;
     PreparedStatement statement = null;
     List<User> users = new ArrayList<>();
     try {
@@ -66,6 +88,7 @@ public class UserDaoImpl implements UserDao {
       logger.warn("User not deleted");
       throw new RuntimeException(e);
     } finally {
+      close(resultSet);
       close(statement);
       close(connection);
     }
@@ -73,9 +96,9 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public User findUserById(int id) throws ConnectionException {
+  public User findUserById(int id) {
     Connection connection = ConnectionPool.getInstance().getConnection();
-    ResultSet resultSet;
+    ResultSet resultSet = null;
     PreparedStatement statement = null;
     User user;
     try {
@@ -87,6 +110,7 @@ public class UserDaoImpl implements UserDao {
       logger.warn("User not deleted");
       throw new RuntimeException(e);
     } finally {
+      close(resultSet);
       close(statement);
       close(connection);
     }
@@ -94,7 +118,7 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public boolean delete(User user) throws ConnectionException {
+  public boolean delete(User user) {
     boolean done = false;
     Connection connection = ConnectionPool.getInstance().getConnection();
     PreparedStatement statement = null;
@@ -113,7 +137,7 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public boolean deleteById(int id) throws ConnectionException {
+  public boolean deleteById(int id) {
     boolean done = false;
     Connection connection = ConnectionPool.getInstance().getConnection();
     PreparedStatement statement = null;
@@ -132,7 +156,7 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public boolean save(User user) throws ConnectionException {
+  public boolean save(User user) {
     boolean done = false;
     Connection connection = ConnectionPool.getInstance().getConnection();
     PreparedStatement statement = null;

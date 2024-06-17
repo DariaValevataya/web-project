@@ -1,6 +1,6 @@
 package com.epam.valevataya.task5.pool;
 
-import com.epam.valevataya.task5.exception.ConnectionException;
+import com.mysql.cj.jdbc.Driver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,12 +16,11 @@ public class ConnectionPool {
   private BlockingQueue<Connection> connections = new LinkedBlockingQueue<>(4);
   private static ConnectionPool instance;
 
-  private ConnectionPool() throws ConnectionException {
+  private ConnectionPool()  {
     try {
-      DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+      DriverManager.registerDriver(new Driver());
     } catch (SQLException e) {
       logger.warn("No connection");
-      throw new ConnectionException(e);
     }
 
     String url = "jdbc:mysql://localhost:3306/task5";
@@ -43,35 +42,32 @@ public class ConnectionPool {
         connections.put(connection);
       } catch (SQLException | InterruptedException e) {
         logger.warn("No connection");
-        throw new ConnectionException(e);
       }
     }
   }
 
-  public static ConnectionPool getInstance() throws ConnectionException {
+  public static ConnectionPool getInstance() {
     if (instance == null) {
       instance = new ConnectionPool();
     }
     return instance;
   }
 
-  public Connection getConnection() throws ConnectionException {
-    Connection connection;
+  public Connection getConnection()  {
+    Connection connection = null;
     try {
       connection = connections.take();
     } catch (InterruptedException e) {
       logger.warn("Don't take connection");
-      throw new ConnectionException(e);
     }
     return connection;
   }
 
-  public void releaseConnection(Connection connection) throws ConnectionException {
+  public void releaseConnection(Connection connection) {
     try {
       connections.put(connection);
     } catch (InterruptedException e) {
       logger.warn("Don't put connection");
-      throw new ConnectionException(e);
     }
   }
 }
