@@ -12,10 +12,11 @@ public class LoginCommand implements Command {
 
   @Override
   public String execute(HttpServletRequest request) {
-    String username = request.getParameter(RequestParameter.USERNAME);
+    String login = request.getParameter(RequestParameter.LOGIN);
     String password = request.getParameter(RequestParameter.PASSWORD);
     String pageResult;
-    if (userService.authenticate(username, password)) {
+    if (userService.authenticateByLogin(login, password)) {
+      request.getSession().setAttribute("login", login);
       pageResult = PagePath.RESOURCE_PAGE;
     } else {
       pageResult = PagePath.LOGIN_PAGE;

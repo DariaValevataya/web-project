@@ -13,8 +13,14 @@ import java.util.List;
 
 public interface UserDao {
   public static final Logger logger = LogManager.getLogger();
-  boolean checkByUsernameAndPassword(String username, String password);
-  boolean authenticate(String username, String password);
+
+  boolean checkByLoginAndPassword(String login, String password);
+
+  boolean checkByEmailAndPassword(String email, String password);
+
+  boolean authenticateByEmail(String email, String password);
+  boolean authenticateByLogin(String login, String password);
+
 
   List<User> findAll();
 
@@ -39,9 +45,9 @@ public interface UserDao {
   }
 
   default void close(Connection connection) {
-      if (connection != null) {
-        ConnectionPool.getInstance().releaseConnection(connection);
-      }
+    if (connection != null) {
+      ConnectionPool.getInstance().releaseConnection(connection);
+    }
   }
 
   default void close(ResultSet resultSet) {

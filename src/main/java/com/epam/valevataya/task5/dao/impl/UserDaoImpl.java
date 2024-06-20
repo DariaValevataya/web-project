@@ -19,20 +19,22 @@ public class UserDaoImpl implements UserDao {
   public static final Logger logger = LogManager.getLogger();
   private static final String SELECT_ALL_USERS = "SELECT * FROM users";
   private static final String SELECT_USER_BY_ID = "SELECT * FROM users WHERE id=?";
-  private static final String SELECT_USER_BY_USERNAME = "SELECT * FROM users WHERE login=?";
-  private static final String SELECT_USER_BY_USERNAME_AND_PASSWORD = "SELECT * FROM users WHERE login=? AND password=?";
+  private static final String SELECT_USER_BY_EMAIL = "SELECT * FROM users WHERE email=?";
+  private static final String SELECT_USER_BY_LOGIN = "SELECT * FROM users WHERE login=?";
+
+  private static final String SELECT_USER_BY_LOGIN_AND_PASSWORD = "SELECT * FROM users WHERE login=? AND password=?";
   private static final String ADD_USER = "INSERT INTO users (login, password) values (?, ?)";
   private static final String UPDATE_USER = "UPDATE users SET login = ?, password = ? WHERE id = ?";
   private static final String DELETE_USER = " DELETE FROM users WHERE id = ? ";
 
   @Override
-  public boolean checkByUsernameAndPassword(String username, String password) {
+  public boolean checkByLoginAndPassword(String login, String password) {
     boolean match;
     Connection connection = ConnectionPool.getInstance().getConnection();
     PreparedStatement statement = null;
     try {
-      statement = connection.prepareStatement(SELECT_USER_BY_USERNAME_AND_PASSWORD);
-      statement.setString(1, username);
+      statement = connection.prepareStatement(SELECT_USER_BY_LOGIN_AND_PASSWORD);
+      statement.setString(1, login);
       statement.setString(2, password);
       match = statement.execute();
     } catch (SQLException e) {
@@ -46,14 +48,59 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public boolean authenticate(String username, String password) {
+  public boolean checkByEmailAndPassword(String email, String password) {
+    boolean match;
+    Connection connection = ConnectionPool.getInstance().getConnection();
+    PreparedStatement statement = null;
+    try {
+      statement = connection.prepareStatement(SELECT_USER_BY_LOGIN_AND_PASSWORD);
+      statement.setString(1, email);
+      statement.setString(2, password);
+      match = statement.execute();
+    } catch (SQLException e) {
+      logger.warn("User not found");
+      throw new RuntimeException(e);
+    } finally {
+      close(statement);
+      close(connection);
+    }
+    return match;
+  }
+
+  @Override
+  public boolean authenticateByEmail(String email, String password) {
     boolean match = false;
     Connection connection = ConnectionPool.getInstance().getConnection();
     ResultSet resultSet = null;
     PreparedStatement statement = null;
     try {
-      statement = connection.prepareStatement(SELECT_USER_BY_USERNAME);
-      statement.setString(1, username);
+      statement = connection.prepareStatement(SELECT_USER_BY_EMAIL);
+      statement.setString(1, email);
+      resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        String pass = resultSet.getString(ColumnName.PASSWORD);
+        match = password.equals(pass);
+      }
+    } catch (SQLException e) {
+      logger.warn("User not found");
+      throw new RuntimeException(e);
+    } finally {
+      close(resultSet);
+      close(statement);
+      close(connection);
+    }
+    return match;
+  }
+
+  @Override
+  public boolean authenticateByLogin(String login, String password) {
+    boolean match = false;
+    Connection connection = ConnectionPool.getInstance().getConnection();
+    ResultSet resultSet = null;
+    PreparedStatement statement = null;
+    try {
+      statement = connection.prepareStatement(SELECT_USER_BY_LOGIN);
+      statement.setString(1, login);
       resultSet = statement.executeQuery();
       while (resultSet.next()) {
         String pass = resultSet.getString(ColumnName.PASSWORD);
@@ -162,7 +209,7 @@ public class UserDaoImpl implements UserDao {
     PreparedStatement statement = null;
     try {
       statement = connection.prepareStatement(ADD_USER);
-      statement.setString(1, user.getUsername());
+      //statement.setString(1, user.getUsername());
       statement.setString(2, user.getPassword());
       done = statement.execute();
     } catch (SQLException e) {

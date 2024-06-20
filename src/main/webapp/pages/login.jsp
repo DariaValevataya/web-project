@@ -10,15 +10,21 @@
 <html>
 <head>
     <title>Login</title>
+    <link href="../styles/login.css" rel="stylesheet">
 </head>
 <body>
-<form action="login.do" method="get">
-    <h1>Input your username and password for LogIn</h1>
-    <label for="username">Username</label>
-    <input id="username" name="username" type="text">
-    <label for="password">Password</label>
-    <input id="password" name="password" type="password">
-    <input type="submit" value="Log in">
-</form>
+<div id="content">
+    <form action="login.do" method="get">
+        <div class="input-field">
+            <label for="login">Login</label><br/>
+            <input id="login" name="login" type="text">
+        </div>
+        <div class="input-field">
+            <label for="password">Password</label><br/>
+            <input id="password" name="password" type="password" >
+        </div>
+        <input class="inputSubmit" type="submit" value="Log in">
+    </form>
+</div>
 </body>
 </html>

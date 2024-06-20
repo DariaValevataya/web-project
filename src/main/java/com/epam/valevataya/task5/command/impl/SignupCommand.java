@@ -13,12 +13,16 @@ public class SignupCommand implements Command {
 
   @Override
   public String execute(HttpServletRequest request) {
-    String username = request.getParameter(RequestParameter.USERNAME);
+    String firstname = request.getParameter(RequestParameter.FIRSTNAME);
+    String lastname = request.getParameter(RequestParameter.LASTNAME);
+    String phone = request.getParameter(RequestParameter.PHONE);
+    String email = request.getParameter(RequestParameter.EMAIL);
+    String login = request.getParameter(RequestParameter.LOGIN);
     String password = request.getParameter(RequestParameter.PASSWORD);
     String confirmPassword = request.getParameter(RequestParameter.CONFIRM_PASSWORD);
     String pageResult;
-    if (userService.comparePasswords(password, confirmPassword) && !userService.checkUserByUsernameAndPassword(username, password)) {
-      userService.createUser(new User(username, password));
+    if (userService.comparePasswords(password, confirmPassword) && !userService.checkUserByLoginAndPassword(login, password)) {
+      userService.createUser(new User(firstname, lastname, phone, email, login, password));
       pageResult = PagePath.LOGIN_PAGE;
     } else {
       pageResult = PagePath.SIGNUP_PAGE;

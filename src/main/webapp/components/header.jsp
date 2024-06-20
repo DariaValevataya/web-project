@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../styles/styles.css" rel="stylesheet">
+    <link href="../styles/header.css" rel="stylesheet">
     <title></title>
 </head>
 <body>
@@ -22,6 +22,7 @@
                 <li><a href="#">Page6</a></li>
             </ul>
         </div>
+        <c:if test="${empty login}">
         <div class="menu-button">
             <a href="${pageContext.request.contextPath}/pages/login.jsp">
                 <button id="login-button">Log in</button>
@@ -30,6 +31,7 @@
                 <button id="signup-button">Sign up</button>
             </a>
         </div>
+        </c:if>
     </div>
 </header>
 </body>
