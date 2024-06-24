@@ -14,7 +14,7 @@
 </head>
 <body>
 <div id="content">
-<form action="signup.do" method="get">
+<form action="signup.do" method="post">
     <div class="input-field">
         <label for="firstname">Firstname</label><br/>
         <input id="firstname" name="firstname" type="text">

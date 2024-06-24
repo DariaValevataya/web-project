@@ -6,7 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="../components/header.jsp"%>
+<%@ include file="../components/header.jsp" %>
 <html>
 <head>
     <title>Login</title>
@@ -21,7 +21,7 @@
         </div>
         <div class="input-field">
             <label for="password">Password</label><br/>
-            <input id="password" name="password" type="password" >
+            <input id="password" name="password" type="password">
         </div>
         <input class="inputSubmit" type="submit" value="Log in">
     </form>

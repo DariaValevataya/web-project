@@ -5,33 +5,56 @@ const login = document.getElementById("login");
 const phone = document.getElementById("phone");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
-const email_regex = /[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+$/;
-const phone_regex = /\+375 (44|29|33|25) [0-9]{3}-[0-9]{2}-[0-9]{2}/;
-const password_regex = /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}/;
-const login_regex = /^\w{6,10}$/;
+const password2 = document.getElementById("confirmPassword");
+
+const email_regex = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+$/;
+var phone_regex = /^\+375 (44|29|33|25) [0-9]{3}-[0-9]{2}-[0-9]{2}$/;
+const password_regex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}$/;
+const login_regex = /\w{6,15}/;
 const firstname_regex = /^([A-Z]|[А-Я])([a-z]|[а-я]){1,15}$/;
 const lastname_regex = /^([A-Z]|[А-Я])([a-z]|[а-я]){1,15}$/;
-
 form.addEventListener('submit', (event) => {
     event.preventDefault();
-
-    if ( validation(phone, phone_regex) === true && validation(email, email_regex) === true && validation(password, password_regex) === true && validation(firstname, firstname_regex) === true && validation(lastname, lastname_regex) === true && validation(login, login_regex) === true) {
-        console.log('ok')
-    }
+    if (validation(firstname, firstname_regex) && validation(lastname, lastname_regex) && validation(phone, phone_regex) && validation(email, email_regex) && validation(login, login_regex) && validation(password, password_regex) && comparePasswords(password, password2)) {
+        const formData=new FormData(form);
+        fetch('${pageContext.request.contextPath}/signup.do', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Form submitted successfully!');
+                } else {
+                    console.error('Error submitting form:', response.status, response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });    }
 });
 
 function validation(input, regex) {
     let validateResult = true;
     removeError(input);
-    if (input.value === "") {
+    if (input.value == "") {
         createError(input, 'Input value ')
-        validateResult = false;
+        return false;
     }
-    if (!regex.test(String(input))) {
+    if (!regex.test(input.value)) {
         createError(input, 'Invalid value')
         validateResult = false;
     }
     return validateResult;
+}
+
+function comparePasswords(input1, input2) {
+    let compareResult = true;
+    removeError(input2);
+    if (input1.value != input2.value) {
+        createError(input2, 'Passwords are not equalse')
+        compareResult = false;
+    }
+    return compareResult;
 }
 
 function createError(input, text) {
@@ -41,11 +64,12 @@ function createError(input, text) {
     errorLabel.textContent = text;
     parent.classList.add('error');
     parent.append(errorLabel);
+
 }
 
 function removeError(input) {
     const parent = input.parentElement;
-    if (parent.classList.contains('error')) {
+    while (parent.classList.contains('error')) {
         parent.querySelector('.error-label').remove();
         parent.classList.remove('error');
     }

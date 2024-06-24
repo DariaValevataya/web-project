@@ -13,6 +13,6 @@
     <link href="styles/header.css" rel="stylesheet">
 </head>
 <body>
-<h1>Hello</h1>
+<p>You should login or signup to continue...</p>
 </body>
 </html>
