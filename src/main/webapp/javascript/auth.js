@@ -15,22 +15,10 @@ const firstname_regex = /^([A-Z]|[А-Я])([a-z]|[а-я]){1,15}$/;
 const lastname_regex = /^([A-Z]|[А-Я])([a-z]|[а-я]){1,15}$/;
 form.addEventListener('submit', (event) => {
     event.preventDefault();
+    console.log('Form submitted');
     if (validation(firstname, firstname_regex) && validation(lastname, lastname_regex) && validation(phone, phone_regex) && validation(email, email_regex) && validation(login, login_regex) && validation(password, password_regex) && comparePasswords(password, password2)) {
-        const formData=new FormData(form);
-        fetch('${pageContext.request.contextPath}/signup.do', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Form submitted successfully!');
-                } else {
-                    console.error('Error submitting form:', response.status, response.statusText);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });    }
+        form.submit();
+    }
 });
 
 function validation(input, regex) {

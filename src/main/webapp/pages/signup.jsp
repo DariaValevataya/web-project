@@ -14,7 +14,7 @@
 </head>
 <body>
 <div id="content">
-<form action="signup.do" method="post">
+<form action="signup.do" method="get">
     <div class="input-field">
         <label for="firstname">Firstname</label><br/>
         <input id="firstname" name="firstname" type="text">
@@ -44,8 +44,8 @@
         <input id="confirmPassword" name="confirmPassword" type="password" ><br/>
     </div>
     <input class="inputSubmit" type="submit" value="Sign up">
+    <script src="../javascript/auth.js"></script>
 </form>
 </div>
-<script src="../javascript/auth.js"></script>
 </body>
 </html>

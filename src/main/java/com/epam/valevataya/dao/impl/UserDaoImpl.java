@@ -21,24 +21,29 @@ public class UserDaoImpl implements UserDao {
   private static final String SELECT_USER_BY_ID = "SELECT * FROM users WHERE id=?";
   private static final String SELECT_USER_BY_LOGIN = "SELECT * FROM users WHERE login=?";
   private static final String SELECT_USER_BY_LOGIN_AND_PASSWORD = "SELECT * FROM users WHERE login=? AND password=?";
-  private static final String ADD_USER = "INSERT INTO users (login, password) values (?, ?)";
+  private static final String ADD_USER = "INSERT INTO users (firstname, lastname, phone, email, login, password) values (?, ?, ?, ?, ?, ?)";
   private static final String UPDATE_USER = "UPDATE users SET login = ?, password = ? WHERE id = ?";
   private static final String DELETE_USER = " DELETE FROM users WHERE id = ? ";
 
   @Override
   public boolean checkByLoginAndPassword(String login, String password) {
-    boolean match;
+    boolean match = false;
     Connection connection = ConnectionPool.getInstance().getConnection();
     PreparedStatement statement = null;
+    ResultSet resultSet = null;
     try {
       statement = connection.prepareStatement(SELECT_USER_BY_LOGIN_AND_PASSWORD);
       statement.setString(1, login);
       statement.setString(2, password);
-      match = statement.execute();
+      resultSet = statement.executeQuery();
+      if (resultSet.next()) {
+        match = true;
+      }
     } catch (SQLException e) {
       logger.warn("User not found");
       throw new RuntimeException(e);
     } finally {
+      close(resultSet);
       close(statement);
       close(connection);
     }
@@ -162,8 +167,12 @@ public class UserDaoImpl implements UserDao {
     PreparedStatement statement = null;
     try {
       statement = connection.prepareStatement(ADD_USER);
-      //statement.setString(1, user.getUsername());
-      statement.setString(2, user.getPassword());
+      statement.setString(1, user.getFirstName());
+      statement.setString(2, user.getLastName());
+      statement.setString(3, user.getPhone());
+      statement.setString(4, user.getEmail());
+      statement.setString(5, user.getLogin());
+      statement.setString(6, user.getPassword());
       done = statement.execute();
     } catch (SQLException e) {
       logger.warn("User not added");

@@ -26,18 +26,6 @@ public class AuthServlet extends HttpServlet {
     }
     request.getRequestDispatcher(page).forward(request, response);
   }
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    response.setContentType("text/html");
-    String requestUri = request.getRequestURI();
-    Command command = CommandType.define(requestUri);
-    String page = null;
-    try {
-      page = command.execute(request);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-    request.getRequestDispatcher(page).forward(request, response);
-  }
 
   public void destroy() {
   }

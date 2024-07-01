@@ -22,6 +22,7 @@ public class UserServiceImpl implements UserService {
     if (validator.loginValidation(login) && validator.passwordValidation(pass)) {
       String encodedPassword = encoder.encode(pass);
       check = userDao.checkByLoginAndPassword(login, encodedPassword);
+      System.out.println(check);
     }
     return check;
   }

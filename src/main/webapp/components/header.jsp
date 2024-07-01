@@ -14,7 +14,7 @@
         </div>
         <div class="main-menu">
             <ul>
-                <li><a href="#">Page1</a></li>
+                <li><a href="${pageContext.request.contextPath}/pages/profile.jsp">Account</a></li>
                 <li><a href="#">Page2</a></li>
                 <li><a href="#">Page3</a></li>
                 <li><a href="#">Page4</a></li>
